@@ -68,9 +68,9 @@ class Products with ChangeNotifier {
   //   notifyListeners();
   // }
 
-  void addProduct(Product product) {
+  Future <void> addProduct(Product product) {
     var url =  dotenv.env['FIREBASE_URL'];
-    http
+    return http
         .post(
       url,
       body: json.encode({
@@ -91,6 +91,7 @@ class Products with ChangeNotifier {
       );
       _items.add(newProduct);
       notifyListeners();
+     
     });
   }
 
