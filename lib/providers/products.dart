@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import '../models/http_exception.dart';
 import './product.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -138,7 +139,7 @@ class Products with ChangeNotifier {
     }
   }
 
-  void deleteProduct(String id) {
+  Future <void> deleteProduct(String id) async {
     final one = dotenv.env['SECOND'];
     final two = 'products/$id.json';
     final url = one + two;
@@ -147,11 +148,16 @@ class Products with ChangeNotifier {
     var existingProduct = _items[existingProductIndex];
     _items.removeAt(existingProductIndex);
     notifyListeners();
-    http.delete(url).then((_) {
-      existingProduct = null;
-    }).catchError((_) {
-      _items.insert(existingProductIndex, existingProduct);
+     final response = await http.delete(url);
+    //  .then((response) {
+      if(response.statusCode >= 400){
+        _items.insert(existingProductIndex, existingProduct);
       notifyListeners();
-    });
+        throw HttpException('Could not delete this product!');
+      }
+      existingProduct = null;
+    // .catchError((_) {
   }
 }
+
+// print(response.statusCode);
