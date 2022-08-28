@@ -75,6 +75,9 @@ class Products with ChangeNotifier {
       final response = await http.get(url);
       //  print(json.decode(response.body));
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
+      if (extractedData == null) {
+        return;
+      }
       final List<Product> loadedProducts = [];
       extractedData.forEach((prodId, prodData) {
         loadedProducts.add(Product(
@@ -141,7 +144,7 @@ class Products with ChangeNotifier {
 
   Future <void> deleteProduct(String id) async {
     final one = dotenv.env['SECOND'];
-    final two = 'products/$id.json';
+     final two = 'products/$id.json';
     final url = one + two;
     final existingProductIndex =
         _items.indexWhere((element) => element.id == id);
