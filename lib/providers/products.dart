@@ -44,6 +44,10 @@ class Products with ChangeNotifier {
 
   // var _showFavoritesOnly = false;
 
+  final String authToken;
+
+  Products(this.authToken, this._items);
+
   List<Product> get items {
     // if(_showFavoritesOnly) {
     //   return _items.where((prodItem) => prodItem.isFavourite).toList();
@@ -70,7 +74,9 @@ class Products with ChangeNotifier {
   // }
 
   Future<void> fetchAndSetProducts() async {
-    var url = dotenv.env['FIREBASE_URL'];
+    var token = '?auth=$authToken';
+    var first = dotenv.env['FIREBASE_URL'];
+    var url = first + token;
     try {
       final response = await http.get(url);
       //  print(json.decode(response.body));
@@ -128,7 +134,8 @@ class Products with ChangeNotifier {
     if (prodIndex >= 0) {
       final one = dotenv.env['SECOND'];
       final two = 'products/$id.json';
-      final url = one + two;
+      var token = '?auth=$authToken';
+      final url = one + two + token;
 
       await http.patch(url,
           body: json.encode({
@@ -145,7 +152,8 @@ class Products with ChangeNotifier {
   Future <void> deleteProduct(String id) async {
     final one = dotenv.env['SECOND'];
      final two = 'products/$id.json';
-    final url = one + two;
+     var token = '?auth=$authToken';
+    final url = one + two + token;
     final existingProductIndex =
         _items.indexWhere((element) => element.id == id);
     var existingProduct = _items[existingProductIndex];
