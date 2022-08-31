@@ -45,8 +45,9 @@ class Products with ChangeNotifier {
   // var _showFavoritesOnly = false;
 
   final String authToken;
+  final String userId;
 
-  Products(this.authToken, this._items);
+  Products(this.authToken, this.userId, this._items);
 
   List<Product> get items {
     // if(_showFavoritesOnly) {
@@ -84,6 +85,12 @@ class Products with ChangeNotifier {
       if (extractedData == null) {
         return;
       }
+      final one = dotenv.env['SECOND'];
+      final two = 'userFavorites/$userId.json';
+      final t = '?auth=$authToken';
+      url = one + two + t;
+      final favoriteResponse = await http.get(url);
+      final favoriteData = json.decode(favoriteResponse.body);
       final List<Product> loadedProducts = [];
       extractedData.forEach((prodId, prodData) {
         loadedProducts.add(Product(
@@ -91,7 +98,7 @@ class Products with ChangeNotifier {
           title: prodData['title'],
           description: prodData['description'],
           price: prodData['price'],
-          isFavourite: prodData['isFavourite'],
+          isFavourite: favoriteData == null ? false : favoriteData[prodId] ?? false,
           imageUrl: prodData['imageUrl'],
         ));
       });
@@ -103,7 +110,9 @@ class Products with ChangeNotifier {
   }
 
   Future<void> addProduct(Product product) async {
-    var url = dotenv.env['FIREBASE_URL'];
+    var token = '?auth=$authToken';
+    var one = dotenv.env['FIREBASE_URL'];
+    var url = one + token;
     try {
       final response = await http.post(
         url,
@@ -112,7 +121,6 @@ class Products with ChangeNotifier {
           'description': product.description,
           'price': product.price,
           'imageUrl': product.imageUrl,
-          'isFavourite': product.isFavourite,
         }),
       );
       final newProduct = Product(
@@ -149,24 +157,24 @@ class Products with ChangeNotifier {
     }
   }
 
-  Future <void> deleteProduct(String id) async {
+  Future<void> deleteProduct(String id) async {
     final one = dotenv.env['SECOND'];
-     final two = 'products/$id.json';
-     var token = '?auth=$authToken';
+    final two = 'products/$id.json';
+    var token = '?auth=$authToken';
     final url = one + two + token;
     final existingProductIndex =
         _items.indexWhere((element) => element.id == id);
     var existingProduct = _items[existingProductIndex];
     _items.removeAt(existingProductIndex);
     notifyListeners();
-     final response = await http.delete(url);
+    final response = await http.delete(url);
     //  .then((response) {
-      if(response.statusCode >= 400){
-        _items.insert(existingProductIndex, existingProduct);
+    if (response.statusCode >= 400) {
+      _items.insert(existingProductIndex, existingProduct);
       notifyListeners();
-        throw HttpException('Could not delete this product!');
-      }
-      existingProduct = null;
+      throw HttpException('Could not delete this product!');
+    }
+    existingProduct = null;
     // .catchError((_) {
   }
 }

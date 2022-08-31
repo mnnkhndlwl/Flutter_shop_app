@@ -20,20 +20,20 @@ class Product with ChangeNotifier {
     this.isFavourite = false,
   });
 
-  Future<void> toggleFavouriteStatus(String token) async {
+  Future<void> toggleFavouriteStatus(String token, String userId) async {
     final one = dotenv.env['SECOND'];
-    final two = 'products/$id.json';
+    final two = 'userFavorites/$userId/$id.json';
     final t = '?auth=$token';
     final url = one + two + t;
     final oldStatus = isFavourite;
     isFavourite = !isFavourite;
     notifyListeners();
     try {
-      final response = await http.patch(
+      final response = await http.put(
         url,
-        body: json.encode({
-          'isFavourite': isFavourite,
-        }),
+        body: json.encode(
+          isFavourite,
+        ),
       );
       if (response.statusCode >= 400) {
         isFavourite = oldStatus;

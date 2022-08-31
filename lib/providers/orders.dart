@@ -3,6 +3,7 @@ import './cart.dart';
 import 'package:http/http.dart' as http;
  import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:convert';
+import 'package:flutter/widgets.dart';
 
 class OrderItem {
   final String id;
@@ -39,7 +40,9 @@ class Orders with ChangeNotifier {
     if (extractedData == null) {
       return;
     }
+    print(extractedData);
     extractedData.forEach((orderId, orderData) => {
+      print(orderData['products']),
           loadedOrders.add(
             OrderItem(
               id: orderId,
@@ -47,8 +50,7 @@ class Orders with ChangeNotifier {
               dateTime: DateTime.parse(
                 orderData['dateTime'],
               ),
-              products: (orderData['products'] as List<dynamic>)
-                  .map((item) => CartItem(
+              products: (orderData['products'] as List<dynamic>).map((item) => CartItem(
                         id: item['id'],
                         price: item['price'],
                         quantity: item['quantity'],
@@ -82,7 +84,7 @@ class Orders with ChangeNotifier {
         'dateTime': timestamp.toIso8601String(),
       }),
     );
-    _orders.insert(
+    await _orders.insert(
       0,
       OrderItem(
         id: json.decode(response.body)['name'],
