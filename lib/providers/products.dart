@@ -74,8 +74,9 @@ class Products with ChangeNotifier {
   //   notifyListeners();
   // }
 
-  Future<void> fetchAndSetProducts() async {
-    var token = '?auth=$authToken';
+  Future<void> fetchAndSetProducts([bool filterByUser = false]) async {
+    final filterString = filterByUser ? 'orderBy="creatorId"&equalTo="$userId"' : '';
+    var token = '?auth=$authToken&$filterString';
     var first = dotenv.env['FIREBASE_URL'];
     var url = first + token;
     try {
@@ -121,6 +122,7 @@ class Products with ChangeNotifier {
           'description': product.description,
           'price': product.price,
           'imageUrl': product.imageUrl,
+          'creatorId' : userId,
         }),
       );
       final newProduct = Product(

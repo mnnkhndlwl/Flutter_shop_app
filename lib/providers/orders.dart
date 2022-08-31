@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import './cart.dart';
 import 'package:http/http.dart' as http;
- import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:convert';
 import 'package:flutter/widgets.dart';
 
@@ -22,8 +22,9 @@ class OrderItem {
 class Orders with ChangeNotifier {
   List<OrderItem> _orders = [];
   final String authToken;
+  final String userId;
 
-  Orders(this.authToken, this._orders);
+  Orders(this.authToken, this.userId,this._orders);
 
   List<OrderItem> get orders {
     return [..._orders];
@@ -31,16 +32,17 @@ class Orders with ChangeNotifier {
 
   Future<void> fetchAndSetOrders() async {
     final one = dotenv.env['SECOND'];
-    final two = 'orders.json';
-    final token = '?auth=$authToken';
+    final two = 'orders/';
+    final token = '$userId.json?auth=$authToken';
     final url = one + two + token;
     final response = await http.get(url);
     final List<OrderItem> loadedOrders = [];
     final extractedData = json.decode(response.body) as Map<String, dynamic>;
     if (extractedData == null) {
+       _orders = [];
+     notifyListeners();
       return;
     }
-    print(extractedData);
     extractedData.forEach((orderId, orderData) => {
       print(orderData['products']),
           loadedOrders.add(
@@ -66,7 +68,7 @@ class Orders with ChangeNotifier {
 
   Future<void> addOrder(List<CartItem> cartProducts, double total) async {
     final one = dotenv.env['SECOND'];
-    final two = 'orders.json?auth=$authToken';
+    final two = 'orders/$userId.json?auth=$authToken';
     var url = one + two ;
     final timestamp = DateTime.now();
     final response = await http.post(
