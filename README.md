@@ -1,16 +1,13 @@
-# shop_app
+# My Shop App
 
-A new Flutter project.
+A Shopping App made with flutter.
 
-## Getting Started
+### Show some :heart: and star the repo to support the project
 
-This project is a starting point for a Flutter application.
+### Screenshots
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+<img src="./s3.jpeg" height="500em" /> <img src="./s2.jpeg" height="500em" /> 
+#
+<img src="./s1.jpeg" height="500em" /> <img src="./s4.jpeg" height="500em" />
+#
+<img src="./s5.jpeg" height="500em" /> <img src="./s6.jpeg" height="500em" />
